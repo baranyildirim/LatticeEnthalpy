@@ -1,0 +1,846 @@
+<html>
+<head>
+    <title>Lattice Enthalpy Calculator</title>
+    <style type="text/css">
+      body {
+        font-family: 'Tahoma';
+        font-size: 15px;
+        background: url(dust.png) repeat 0 0;
+      }
+      .container{
+      	width: 100%;
+      	position: relative;
+      }
+      div.equations {
+      	position: absolute;
+      	bottom: 425px;
+      	left: 550px;
+      	width: 622px;
+      	height: 290px;
+      	border: 2px dotted #808080;
+      }
+      div.calculator {
+      	position: absolute;
+      	bottom: 40px;
+      	left: 550px;
+      	border: 2px dotted #808080;
+      	padding-left: 10px;
+
+      }
+      div.input {
+      	position: absolute;
+      	bottom: 725px;
+      	left: 550px;
+      	width: 540px;
+      	height: 65px;
+      	border: 2px dotted #808080;
+      	padding-left: 10px;
+      	padding-top: 10px;
+      	padding-right: 10px;
+      	font-size: 18px;
+      }
+      div.equation {
+      	position: absolute;
+      	bottom: 360px;
+      	left: 550px;
+      	height: 40px;
+      	border: 2px dotted #808080;
+      	padding-left: 10px;
+      	padding-top: 10px;
+      	padding-right: 10px;
+      	display: none;
+      }
+      div.equation2 {
+      	position: absolute;
+      	bottom: 300px;
+      	left: 550px;
+      	height: 40px;
+      	border: 2px dotted #808080;
+      	padding-left: 10px;
+      	padding-top: 10px;
+      	padding-right: 10px;
+      	display: none;
+
+      }
+      div.equation3 {
+      	position: absolute;
+      	bottom: 300px;
+      	left: 1080px;
+      	width: 140px;
+      	height: 40px;
+      	border: 2px dotted #808080;
+      	padding-left: 10px;
+      	padding-top: 10px;
+      	display: none;
+
+      }
+
+      canvas.contextCanvas {
+      	/*bottom:0;
+      	position: absolute;*/
+      }
+      .TextNode {
+      	margin:0 auto;
+      }
+
+      input[type=button] {
+          width: 6em;	  
+          height: 3em; 
+          margin-bottom: 6px;
+          background: rgba(0,0,0,0);
+          border: 1px dotted #808080;
+          font-size: 16px;
+      }
+
+      .calc_input {
+      	border: 3px solid #808080;
+      	margin-left: 1em;
+      	margin-top: 2px;
+      	width: 300px;
+      	height: 40px;
+      	font-size: 24px;
+      	margin-bottom: 4px;
+
+
+      }
+      input.hint_button {
+      	position: absolute;
+      	left: 980px;
+      	bottom: 220px;
+      }
+      input.answer_button {
+      	position: absolute;
+      	left: 980px;
+      	bottom: 160px;
+      	width: 120px;
+      }
+
+
+    </style>
+    </head>
+    <body>
+    <div class="container">
+
+        <canvas class="contextCanvas" id="born_haber" width="530" height="800" style="border:2px dotted #808080"></canvas>
+
+        <div class="equations" id="div1" width="340" height="230"></div>
+
+        <div class="calculator" id="calculator" width ="540" height="230">   
+        <FORM NAME="Calc">
+        <TABLE BORDER=0>
+        <TR>
+        <TD>
+        <INPUT class="calc_input" id='calc_input' TYPE="text"   NAME="Input" Size="25"> kJ	/ mol
+        <br>
+        </TD>
+        </TR>
+        <TR>
+        <TD>
+        <INPUT id= 'button1' TYPE="button" NAME="one"   VALUE="    ">
+        <INPUT id= 'button2' TYPE="button" NAME="two"   VALUE="    " oncLick=>
+        <INPUT id= 'button3' TYPE="button" NAME="three" VALUE="    " onclick=>
+        <INPUT TYPE="button" NAME="plus"  VALUE="  +  " onclick="Calc.Input.value += ' + '">
+        <br>
+        <INPUT id= 'button4' TYPE="button" NAME="four"  VALUE="    " onclick=>
+        <INPUT id= 'button5' TYPE="button" NAME="five"  VALUE="    " oncLick=>
+        <INPUT id= 'button6' TYPE="button" NAME="six"   VALUE="    " onclick=>
+        <INPUT TYPE="button" NAME="minus" VALUE="  -  " onclick="Calc.Input.value += ' - '">
+        <br>
+        <INPUT id= 'button7' TYPE="button" NAME="seven" VALUE="    " OnClick="">
+        <INPUT TYPE="button" NAME="clear" VALUE="  c  " onclick="Calc.Input.value = ''">
+        <INPUT TYPE="button" NAME="DoIt"  VALUE="  =  " onclick="Calc.Input.value = eval(Calc.Input.value)">
+
+        <br>
+        </TD>
+        </TR>
+        </TABLE>
+        </FORM>
+
+    	</div>
+
+
+        <div class="input" id="div3" width ="340" height="530"> 
+        	<form class="calculator_input" name="calculator_input" >
+        		For which compound would you like to calculate lattice enthalpy?<input type="text" id="compound_input" maxlength="6" name="compound_input" value="">
+        	<input type="submit" value="Calculate!" onClick="lattice_enthalpy(); return false;"> 
+        </form>	
+        </div>
+        <div class="equation" id="div4" width="420" height= "100">
+
+        </div>
+        <div class="equation2" id="div5" width="420" height= "100">
+
+        </div>
+        <div class="equation3" id="div6" width="50" height= "100">
+        </div>
+
+        <div class ="buttons" id="buttons">
+        		<input class="hint_button" type="button" value="Reveal Hint" onclick="reveal_hint()"> 
+        		<input class="answer_button" type="button" value="Show Answer" onclick="reveal_answer()"> 
+        </div>
+
+
+    </div>
+
+   
+
+    <script type="text/javascript">
+
+    function reveal_hint(){
+    	document.getElementById('div4').style.display =  'block';
+
+    }
+    function reveal_answer(){
+    	document.getElementById('div5').style.display =  'block';
+    	document.getElementById('div6').style.display =  'block';
+    }
+
+    var atomization = {
+
+    	"Li": 159,
+    	"Na": 107,
+    	"K": 89,
+    	"Rb": 81,
+    	"Cs": 76,
+    	"Be": 324,
+    	"Mg": 146,
+    	"Ca": 178,
+    	"Sr": 164,
+    	"Ba": 182,
+    	"F": 79,
+    	"Cl": 122,
+    	"Br": 112,
+    	"I": 107,
+    	"Ag": 285,
+    	"Cu": 338,
+    	"O": 249
+    };
+
+    var ionization_1 = {
+
+    	"Li": 520,
+    	"Na": 496,
+    	"K": 419,
+    	"Rb": 403,
+    	"Cs": 376,
+    	"Be": 900,
+    	"Mg": 738,
+    	"Ca": 590,
+    	"Sr": 549,
+    	"Ba": 503,
+    	"Ag": 731,
+    	"Cu": 746
+
+
+    };
+
+    var formation_enthalpy = {
+
+    	"LiF": -616,
+    	"LiCl": -409,
+    	"LiBr": -351,
+    	"LiI": -270,
+    	"NaF": -577,
+    	"NaCl": -411,
+    	"NaBr": -361,
+    	"NaI": -288,
+    	"KF": -567, 
+    	"KCl": -437,
+    	"KBr": -394,
+    	"KI": -328,
+    	"RbF": -558,
+    	"RbCl": -435,
+    	"RbBr": -395, 
+    	"RbI": -334,
+    	"CsF": -554,
+    	"CsCl": -443,
+    	"CsBr": -406,
+    	"CsI": -347,
+    	"BeF2":-1027,
+    	"BeCl2": -490,
+    	"BeBr2": -354,
+    	"BeI2": -193,
+    	"MgF2": -1124, 
+    	"MgCl2": -641,
+    	"MgBr2": 0,
+    	"MgI2": 0,
+    	"CaF2": -1228, 
+    	"CaCl2": -795,
+    	"CaBr2": -683,
+    	"CaI2": -534,
+    	"SrF2": -1216,
+    	"SrCl2": -829,
+    	"SrBr2": -718,
+    	"SrI2": -558,
+    	"BaF2": -1207,
+    	"BaCl2": -855,
+    	"BaBr2": -757,
+    	"BaI2": -602,
+    	"AgF": -205,
+    	"AgCl": -127,
+    	"AgBr": -100,
+    	"AgI": -62,
+    	"CuCl2": -220,
+    	"BeO": -609,
+    	"MgO": -602,
+    	"CaO": -635,
+    	"SrO": -592,
+    	"BaO": -548
+
+
+    };
+
+    var ionization_2 = {
+
+    	"Be": 1757,
+    	"Mg": 1451,
+    	"Ca": 1145,
+    	"Sr": 1064,
+    	"Ba": 965,
+    	"Cu": 1958
+
+    };
+
+
+    var electron_affinity = {
+
+    	"F": -328,
+    	"Cl": -349,
+    	"Br": -325,
+    	"I": -295,
+    	"O":-141
+
+    };
+
+    var electron_affinitiy2 = {
+
+    	"O": 753,
+    }
+
+
+
+    function generate_equations(compound, cation, anion, cation_group, anion_group){
+    		var formation = -formation_enthalpy[compound];
+    		var cation_a = atomization[cation];
+    		var anion_a = atomization[anion];
+    		var cation_i = ionization_1[cation];
+    		var cation_i2 = ionization_2[cation];
+    		var anion_ea = electron_affinity[anion];
+    		var anion_ea2 = electron_affinitiy2[anion];
+
+
+    		
+    		document.getElementById("div1").innerHTML = "";
+    		document.getElementById("div4").innerHTML = "";
+    		document.getElementById("div5").innerHTML = "";
+    		document.getElementById("div6").innerHTML = "";
+    		var result = document.getElementById('calc_input');
+ 			var element = document.getElementById('div1');
+            var space = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
+            var smals = '\u00A0\u00A0\u00A0\u00A0\u00A0';
+            document.getElementById("button1").value = `-\u0394H\u1D73(${compound})`;
+            document.getElementById("button2").value = `\u0394H\u2090(${cation})`;
+            document.getElementById("button3").value = `\u0394H\u2090(${anion})`;
+            document.getElementById("button4").value = `\u0394H\u1D62(${cation})`;
+            document.getElementById("button5").value = `\u0394H\u2091\u2090(${anion})`;
+            document.getElementById("button6").value = `\u0394H\u1D62\u2082(${cation})`;
+            document.getElementById("button7").value = `\u0394H\u2091\u2090\u2082(${anion})`;
+
+
+            document.getElementById("button1").onclick = function(){Calc.Input.value +=  formation;};
+            document.getElementById("button2").onclick = function(){Calc.Input.value +=  cation_a;};
+            document.getElementById("button3").onclick = function(){Calc.Input.value +=  anion_a;};
+            document.getElementById("button4").onclick = function(){Calc.Input.value +=  cation_i;};
+            document.getElementById("button5").onclick = function(){Calc.Input.value +=  anion_ea;};
+            document.getElementById("button6").onclick = function(){Calc.Input.value +=  cation_i2;};
+            document.getElementById("button7").onclick = function(){Calc.Input.value +=  anion_ea2;};
+
+
+
+            if (cation_group == 1) {
+            	document.getElementById('div6').style.left = '950';
+            	var lattice_e = formation + cation_a + anion_a + cation_i + anion_ea;
+            	var eq1 = `\u00A0\u00A0${compound}(s) \u2192 ${cation}(s) + \u00BD${anion}\u2082(g)${space}\u00A0-\u0394H\u1D73(${compound}) = ${formation} kJ/mol`;
+            	var eq2 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}(g)${space}${smals}${smals}${smals}\u00A0\u00A0\u00A0\u0394H\u2090(${cation}) = ${cation_a} kJ/mol`;
+            	var eq3 = `\u00A0\u00A0\u00BD${anion}\u2082(g) \u2192 ${anion}(g)${space}${smals}${smals}\u00A0\u00A0\u00A0\u00A0\u0394H\u2090(${anion}) = ${anion_a} kJ/mol`;
+            	var eq4 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}\u207A(g)+ e\u207B${space}${smals}\u00A0\u00A0\u00A0\u00A0\u00A0\u0394H\u1D62(${cation}) = ${cation_i} kJ/mol`;
+            	var eq5 = `\u00A0\u00A0${anion}(g) + e\u207B \u2192 ${anion}\u207B(g)${space}${smals}\u00A0\u00A0\u00A0\u00A0\u00A0\u0394H\u2091\u2090(${anion}) = ${anion_ea} kJ/mol`;
+            	var eq6 = `\u00A0\u00A0${compound}(s) \u2192 ${cation}\u207A(g) + ${anion}\u207B(g)${space}${space}${smals}\u0394HLE`;
+            	var eq7 = "+_____________________________________";
+            	var eq8 = `Lattice Enthalpy = -\u0394H\u1D73(${compound}) + \u0394H\u2090(${cation}) + \u0394H\u2090(${anion}) + \u0394H\u1D62(${cation}) + \u0394H\u2091\u2090(${anion})  `;
+            	var eq9 = `Lattice Enthalpy = ${formation} + ${cation_a} + ${anion_a} + ${cation_i} + ${anion_ea}\u00A0\u00A0=`;
+            	var eq10 = `${lattice_e} \u00B1 3 kJ/mol`;
+            }
+            if (cation_group == 2 && anion_group == 1) {
+            	document.getElementById('div6').style.left = '1040';
+            	var lattice_e = formation + cation_a + anion_a +anion_a+ cation_i + cation_i2 + anion_ea + anion_ea;
+            	var eq1 = `\u00A0\u00A0${cation}${anion}\u2082(s) \u2192 ${cation}(s) + ${anion}\u2082(g)${space}-\u0394H\u1D73(${compound}) = ${formation} kJ/mol`;
+            	var eq2 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}(g)${space}${smals}${smals}${smals}\u00A0\u00A0\u00A0\u0394H\u2090(${cation}) = ${cation_a} kJ/mol`;
+            	var eq3 = `\u00A0\u00A0${anion}\u2082(g) \u2192 2${anion}(g)${space}${smals}${smals}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A02\u0394H\u2090(${anion}) = ${anion_a * 2} kJ/mol`;
+            	var eq4 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}\u00B2\u207A(g)+ 2e\u207B${space}${smals}\u00A0\u00A0\u0394H\u1D62(${cation}) + \u0394H\u1D62\u2082(${cation}) = ${cation_i} + ${cation_i2}  kJ/mol`;
+            	var eq5 = `\u00A0\u00A02${anion}(g) + 2e\u207B \u2192 2${anion}\u207B(g)${space}${smals}\u00A02\u0394H\u2091\u2090(${anion}) = ${anion_ea * 2} kJ/mol`;
+            	var eq6 = `\u00A0\u00A0${cation}${anion}\u2082(s) \u2192 ${cation}\u207A(g) + ${anion}\u207B(g)$\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u0394HLE`;
+            	var eq7 = "+_____________________________________";
+            	var eq8 = `\u00A0\u00A0Lattice Enthalpy = -\u0394H\u1D73(${cation}${anion}\u00B2\u2082) + \u0394H\u2090(${cation}) + 2\u0394H\u2090(${anion}) + \u0394H\u1D62\u208A\u1D62\u2082(${cation}) + 2\u0394H\u2091\u2090(${anion})`;
+            	var eq9 = `\u00A0\u00A0Lattice Enthalpy = ${formation} + ${cation_a} + ${anion_a*2} + ${cation_i} +  ${cation_i2} + ${anion_ea*2}\u00A0\u00A0=` 
+            	var eq10 = `${lattice_e} \u00B1 20 kJ/mol`;
+
+            }
+            if (cation_group == 2 && anion_group == 2) {
+            	document.getElementById('div6').style.left = '1080';
+            	var lattice_e = formation + cation_a + anion_a + cation_i + cation_i2 + anion_ea + anion_ea2;
+            	var eq1 = `\u00A0\u00A0${cation}${anion}(s) \u2192 ${cation}(s) + \u00BD${anion}\u2082(g)${space}-\u0394H\u1D73(${compound}) = ${formation} kJ/mol`;
+            	var eq2 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}(g)${space}${smals}${smals}${smals}\u00A0\u00A0\u00A0\u0394H\u2090(${cation}) = ${cation_a} kJ/mol`;
+            	var eq3 = `\u00A0\u00A0\u00BD${anion}\u2082(g) \u2192 ${anion}(g)${space}${smals}${smals}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u0394H\u2090(${anion}) = ${anion_a} kJ/mol`;
+            	var eq4 = `\u00A0\u00A0${cation}(s) \u2192 ${cation}\u00B2\u207A(g)+ 2e\u207B${space}${smals}\u00A0\u00A0\u0394H\u1D62(${cation}) + \u0394H\u1D62\u2082(${cation}) = ${cation_i} + ${cation_i2}  kJ/mol`;
+            	var eq5 = `\u00A0\u00A0${anion}(g) + 2e\u207B \u2192 ${anion}\u00B2\u207B(g)${space}${smals}\u00A0\u0394H\u2091\u2090(${anion}) + \u0394H\u2091\u2090\u2082(${anion}) = ${anion_ea} + ${anion_ea2} kJ/mol`;
+            	var eq6 = `\u00A0\u00A0${cation}${anion}(s) \u2192 ${cation}\u00B2\u207A(g) + ${anion}\u00B2\u207B(g)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u0394HLE`;
+            	var eq7 = "+_____________________________________";
+            	var eq8 = `\u00A0\u00A0Lattice Enthalpy = -\u0394H\u1D73(${cation}${anion}\u2082) + \u0394H\u2090(${cation}) + \u0394H\u2090(${anion}) + \u0394H\u1D62\u208A\u1D62\u2082(${cation}) + \u0394H\u2091\u2090\u208A\u2091\u2090\u2082(${anion})`;
+            	var eq9 = `\u00A0\u00A0Lattice Enthalpy = ${formation} + ${cation_a} + ${anion_a} + ${cation_i} +  ${cation_i2} + ${anion_ea} +  ${anion_ea2}\u00A0\u00A0=`
+            	var eq10 = `${lattice_e} \u00B1 10 kJ/mol`;
+
+            }
+
+
+
+            element.style.fontSize = "16px";
+            element.style.fontWeight = "1";
+            element.style.fontFamily = 'Tahoma';
+            var textNode = document.createTextNode(`${eq1}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var textNode = document.createTextNode(`${eq2}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+            var textNode = document.createTextNode(`${eq3}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var textNode = document.createTextNode(`${eq4}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var textNode = document.createTextNode(`${eq5}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var textNode = document.createTextNode(`${eq7}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var textNode = document.createTextNode(`${eq6}`);
+            element.appendChild(textNode);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var linebreak = document.createElement('br');
+            element.appendChild(linebreak);
+
+            var element = document.getElementById('div4');
+            element.style.fontSize = "16px";
+            var textNode = document.createTextNode(`${eq8}`);
+            element.appendChild(textNode);
+
+            var element = document.getElementById('div5');
+            element.style.fontSize = "16px";	
+            var textNode = document.createTextNode(`${eq9}`);
+            element.appendChild(textNode);
+
+            var element = document.getElementById('div6')
+            element.style.fontWeight = "900";
+            var textNode = document.createTextNode(`${eq10}`);
+            element.appendChild(textNode);
+
+    }
+
+	    function draw_arrow(from_x, from_y, to_x, to_y, direction){
+      var canvas = document.getElementById("born_haber");
+      var c = canvas.getContext("2d");
+      if (direction == 1) { // 1 is up
+            c.beginPath();
+            c.strokeStyle = 'red';
+            c.fillStyle = 'red';
+            c.moveTo(from_x, from_y);
+            c.lineTo(to_x, to_y);
+            c.lineTo(to_x - 10, to_y + 10);
+            c.moveTo(to_x, to_y);
+            c.lineTo(to_x + 10, to_y + 10);
+            c.stroke();    
+      }
+      else if (direction == 2) { // 2 is to the right
+            c.beginPath();
+            c.strokeStyle = 'red';
+            c.fillStyle = 'red';
+            c.moveTo(from_x, from_y);
+            c.lineTo(to_x, to_y);
+            c.lineTo(to_x - 10, to_y - 10);
+            c.moveTo(to_x, to_y);
+            c.lineTo(to_x - 10, to_y + 10);
+            c.stroke();
+      }
+      else if (direction == 3) { // 3 is down
+            c.beginPath();
+            c.strokeStyle = 'red';
+            c.fillStyle = 'red';
+            c.moveTo(from_x, from_y);
+            c.lineTo(to_x, to_y);
+            c.lineTo(to_x - 10, to_y - 10);
+            c.moveTo(to_x, to_y);
+            c.lineTo(to_x + 10, to_y - 10);
+            c.stroke();
+      }
+
+    }
+    
+    function generate_born_haber(compound, cation, anion, cation_group, anion_group) {
+
+
+            var c = document.getElementById("born_haber");
+            var ctx = c.getContext("2d");
+            ctx.clearRect(0, 0, 550, 800);
+            ctx.save();
+            ctx.font = "bold 30px Tahoma";
+            draw_arrow(50,650,50,750, 3);
+            draw_arrow(50,600,50,450, 1);
+            draw_arrow(50,400,50,250, 1);
+            draw_arrow(50,200,50,100, 1);
+            draw_arrow(150,80,425,80, 2);
+            draw_arrow(450,750,450,100, 1);
+
+            if (cation_group == 1) {
+            	ctx.fillStyle = 'black';
+            	ctx.strokeStyle = 'black';
+            	var canvas_title = 'Born-Haber Cycle for ' + compound;
+            	ctx.fillText(`${canvas_title}`,80,50);
+            	ctx.font = "14px Tahoma";
+            	ctx.fillText( `Enthalpy change of ${compound} formation = \u0394H\u1D73(${compound})`,70,700);
+            	ctx.fillText( `Enthalpy change of ${cation} atomization = \u0394H\u2090(${cation})`,70,525);
+            	ctx.fillText( `Enthalpy change of ${anion} atomization = \u0394H\u2090(${anion})`,70,325);
+            	ctx.fillText( `Enthalpy change of ${cation} first ionization = \u0394H\u1D62(${cation})`,70,150);
+            	ctx.fillText( `Enthalpy change of ${anion} electron affinity = \u0394H\u2091\u2090(${anion})`,100,100);
+            	ctx.fillText( `${compound}(s)`,40,775);
+            	ctx.fillText( `${cation}${anion}(s)`,430,775);
+            	ctx.fillText( `${cation}(s) + \u00BD${anion}\u2082(g)`,40,625);
+            	ctx.fillText( `${cation}(g) + \u00BD${anion}\u2082(g)`,40,425);
+            	ctx.fillText( `${cation}(g) + ${anion}(g)`,40,225);
+            	ctx.fillText( `${cation}\u207A(g)+ e\u207B + ${anion}(g)`,10,85);
+            	ctx.fillText( `${cation}\u207A(g) + ${anion}\u207B(g)`,427,85);
+            	ctx.rotate(Math.PI / 2 );
+            	ctx.textAlign = "right";
+            	ctx.fillText( `Lattice Enthalpy = \u0394HLE(${compound})`,500,-455);
+            }
+
+            if (cation_group == 2 && anion_group == 1) {
+            	ctx.fillStyle = 'black';
+            	ctx.strokeStyle = 'black';
+            	var canvas_title =  `Born-Haber Cycle for ${cation}${anion}\u2082` ;
+            	ctx.fillText(`${canvas_title}`,80,50);
+            	ctx.font = "14px Tahoma";
+            	ctx.fillText( `Enthalpy change of ${cation}${anion}\u2082 formation = \u0394H\u1D73(${cation}${anion}\u2082)`,70,700);
+            	ctx.fillText( `Enthalpy change of ${cation} atomization = \u0394H\u2090(${cation})`,70,525);
+            	ctx.fillText( `Enthalpy change of ${anion} atomization = 2\u0394H\u2090(${anion})`,70,325);
+            	ctx.fillText( `Enthalpy change of ${cation} first and second ionization`,70,150); 
+            	ctx.fillText( `= \u0394H\u1D62(${cation}) + \u0394H\u1D62\u2082(${cation})`,70,170);
+            	ctx.fillText( `Enthalpy change of ${anion} electron affinity = 2\u0394H\u2091\u2090(${anion})`,100,100);
+            	ctx.fillText( `${cation}${anion}\u2082(s)`,40,775);
+            	ctx.fillText( `${cation}${anion}\u2082(s)`,430,775);
+            	ctx.fillText( `${cation}(s) + ${anion}\u2082(g)`,40,625);
+            	ctx.fillText( `${cation}(g) + ${anion}\u2082(g)`,40,425);
+            	ctx.fillText( `${cation}(g) + 2${anion}(g)`,40,225);
+            	ctx.fillText( `${cation}\u207A(g)+ 2e\u207B + 2${anion}(g)`,10,85);
+            	ctx.fillText( `${cation}\u207A(g) + 2${anion}\u207B(g)`,427,85);
+            	ctx.rotate(Math.PI / 2 );
+            	ctx.textAlign = "right";
+            	ctx.fillText( `Lattice Enthalpy = \u0394HLE(${cation}${anion}\u2082)`,500,-455);
+            }
+            if (cation_group == 2 && anion_group == 2) {
+            	ctx.fillStyle = 'black';
+            	ctx.strokeStyle = 'black';
+            	var canvas_title =  `Born-Haber Cycle for ${cation}${anion}` ;
+            	ctx.fillText(`${canvas_title}`,80,50);
+            	ctx.font = "14px Tahoma";
+            	ctx.fillText( `Enthalpy change of ${cation}${anion} formation = \u0394H\u1D73(${compound})`,70,700);
+            	ctx.fillText( `Enthalpy change of ${cation} atomization = \u0394H\u2090(${cation})`,70,525);
+            	ctx.fillText( `Enthalpy change of ${anion} atomization = \u0394H\u2090(${anion})`,70,325);
+            	ctx.fillText( `Enthalpy change of ${cation} first and second ionization`,70,150); 
+            	ctx.fillText( `= \u0394H\u1D62(${cation}) + \u0394H\u1D62\u2082(${cation})`,70,170);
+            	ctx.fillText( `Enthalpy change of ${anion} first and second electron affinity`,100,100);
+            	ctx.fillText(` = \u0394H\u2091\u2090(${anion}) + \u0394H\u2091\u2090\u2082(${anion})`,100,120);
+            	ctx.fillText( `${cation}${anion}(s)`,40,775);
+            	ctx.fillText( `${cation}${anion}(s)`,430,775);
+            	ctx.fillText( `${cation}(s) + \u00BD${anion}\u2082(g)`,40,625);
+            	ctx.fillText( `${cation}(g) + \u00BD${anion}\u2082(g)`,40,425);
+            	ctx.fillText( `${cation}(g) + ${anion}(g)`,40,225);
+            	ctx.fillText( `${cation}\u00B2\u207A(g)+ 2e\u207B + ${anion}(g)`,10,85);
+            	ctx.fillText( `${cation}\u00B2\u207A(g) + ${anion}\u00B2\u207B(g)`,427,85);
+            	ctx.rotate(Math.PI / 2 );
+            	ctx.textAlign = "right";
+            	ctx.fillText( `Lattice Enthalpy = \u0394HLE(${cation}${anion}\u2082)`,500,-455);
+            }
+
+            ctx.restore();
+
+    }
+
+
+
+
+    function lattice_enthalpy(){
+            var compound = document.getElementById("compound_input").value;
+
+            document.getElementById('div4').style.display =  'none';
+            document.getElementById('div5').style.display =  'none';
+            document.getElementById('div6').style.display =  'none';
+
+
+        
+
+            if (compound == "LiF") { 
+                  generate_born_haber(compound, 'Li', 'F', 1);
+                  generate_equations(compound, 'Li', 'F', 1);
+
+                  
+            }
+            else if (compound == "LiCl") {
+            	generate_born_haber(compound, 'Li', 'Cl', 1);
+            	generate_equations(compound, 'Li', 'Cl', 1);
+            }
+            else if (compound == "LiBr") {
+            	generate_born_haber(compound, 'Li', 'Br', 1);
+            	generate_equations(compound, 'Li', 'Br', 1);
+
+            }
+            else if (compound == "LiI") {
+            	generate_born_haber(compound, 'Li', 'I', 1);
+            	generate_equations(compound, 'Li', 'I', 1);
+            }
+            else if (compound == "NaF") {
+            	generate_born_haber(compound, 'Na', 'F', 1);
+            	generate_equations(compound, 'Na', 'F', 1);
+            }
+            else if (compound == "NaCl") {
+            	generate_born_haber(compound, 'Na', 'Cl', 1);
+            	generate_equations(compound, 'Na', 'Cl', 1);
+            }
+            else if (compound == "NaBr") {
+            	generate_born_haber(compound, 'Na', 'Br', 1);
+            	generate_equations(compound, 'Na', 'Br', 1);
+            }
+            else if (compound == "NaI") {
+            	generate_born_haber(compound, 'Na', 'I', 1);
+            	generate_equations(compound, 'Na', 'I', 1);
+            }
+            else if (compound == "KF") {
+            	generate_born_haber(compound, 'K', 'F', 1);
+            	generate_equations(compound, 'K', 'F', 1);
+            }
+            else if (compound == "KCl") {
+            	generate_born_haber(compound, 'K', 'Cl', 1);
+            	generate_equations(compound, 'K', 'Cl', 1);
+            }
+            else if (compound == "KBr") {
+            	generate_born_haber(compound, 'K', 'Br', 1);
+            	generate_equations(compound, 'K', 'Br', 1);
+            }
+            else if (compound == "KI") {
+            	generate_born_haber(compound, 'K', 'I', 1);
+            	generate_equations(compound, 'K', 'I', 1);
+            }
+            else if (compound == "RbF") {
+            	generate_born_haber(compound, 'Rb', 'F', 1);
+            	generate_equations(compound, 'Rb', 'F', 1);
+            }
+            else if (compound == "RbCl") {
+            	generate_born_haber(compound, 'Rb', 'Cl', 1);
+            	generate_equations(compound, 'Rb', 'Cl', 1);
+            }
+            else if (compound == "RbBr") {
+            	generate_born_haber(compound, 'Rb', 'Br', 1);
+            	generate_equations(compound, 'Rb', 'Br', 1);
+            }
+            else if (compound == "RbI") {
+            	generate_born_haber(compound, 'Rb', 'I', 1);
+            	generate_equations(compound, 'Rb', 'I', 1);
+            }
+            else if (compound == "CsF") {
+            	generate_born_haber(compound, 'Cs', 'F', 1);
+            	generate_equations(compound, 'Cs', 'F', 1);
+            }
+            else if (compound == "CsCl") {
+            	generate_born_haber(compound, 'Cs', 'Cl', 1);
+            	generate_equations(compound, 'Cs', 'Cl', 1);
+            }
+            else if (compound == "CsBr") {
+            	generate_born_haber(compound, 'Cs', 'Br', 1);
+            	generate_equations(compound, 'Cs', 'Br', 1);
+            }
+            else if (compound == "CsI") {
+            	generate_born_haber(compound, 'Cs', 'I', 1);
+            	generate_equations(compound, 'Cs', 'I', 1);
+            }
+            else if (compound == "BeF2") {
+            	generate_born_haber(compound, 'Be', 'F',2,1);
+            	generate_equations(compound, 'Be', 'F',2,1)
+            }
+            else if (compound == "BeCl2") {
+            	generate_born_haber(compound, 'Be', 'Cl',2,1);
+            	generate_equations(compound, 'Be', 'Cl',2,1);
+            }
+            else if (compound == "BeBr2") {
+            	generate_born_haber(compound, 'Be', 'Br',2,1);
+            	generate_equations(compound, 'Be', 'Br',2,1);
+
+            }
+            else if (compound == "BeI2") {
+            	generate_born_haber(compound, 'Be', 'I',2,1);
+            	generate_equations(compound, 'Be', 'I',2,1);
+
+            }
+            else if (compound == "MgF2") {
+            	generate_born_haber(compound, 'Mg', 'F',2,1);
+            	generate_equations(compound, 'Mg', 'F',2,1);
+            }
+            else if (compound == "MgCl2") {
+            	generate_born_haber(compound, 'Mg', 'Cl',2,1);
+            	generate_equations(compound, 'Mg', 'Cl',2,1);
+            }
+            else if (compound == "MgBr2") {
+            	generate_born_haber(compound, 'Mg', 'Br',2,1);
+            	generate_equations(compound, 'Mg', 'Br',2,1);
+            }
+            else if (compound == "MgI2") {
+            	generate_born_haber(compound, 'Mg', 'I',2,1);
+            	generate_equations(compound, 'Mg', 'I',2,1);
+            }
+            else if (compound == "CaF2") {
+            	generate_born_haber(compound, 'Ca', 'F',2,1);
+            	generate_equations(compound, 'Ca', 'F',2,1);
+            }
+            else if (compound == "CaCl2") {
+            	generate_born_haber(compound, 'Ca', 'Cl',2,1);
+            	generate_equations(compound, 'Ca', 'Cl',2,1);
+            }
+            else if (compound == "CaBr2") {
+            	generate_born_haber(compound, 'Ca', 'Br',2,1);
+            	generate_equations(compound, 'Ca', 'Br',2,1);
+            }
+            else if (compound == "CaI2") {
+            	generate_born_haber(compound, 'Ca', 'I',2,1);
+            	generate_equations(compound, 'Ca', 'I',2,1);
+            }
+            else if (compound == "SrF2") {
+            	generate_born_haber(compound, 'Sr', 'F',2,1);
+            	generate_equations(compound, 'Sr', 'F',2,1);
+
+            }
+            else if (compound == "SrCl2") {
+            	generate_born_haber(compound, 'Sr', 'Cl',2,1);
+            	generate_equations(compound, 'Sr', 'Cl',2,1);
+            }
+            else if (compound == "SrBr2") {
+            	generate_born_haber(compound, 'Sr', 'Br',2,1);
+            	generate_equations(compound, 'Sr', 'Br',2,1);
+            }
+            else if (compound == "SrI2") {
+            	generate_born_haber(compound, 'Sr', 'I',2,1);
+            	generate_equations(compound, 'Sr', 'I',2,1);
+            }
+            else if (compound == "BaF2") {
+            	generate_born_haber(compound, 'Ba', 'F',2,1);
+            	generate_equations(compound, 'Ba', 'F',2,1);
+
+            }
+            else if (compound == "BaCl2") {
+            	generate_born_haber(compound, 'Ba', 'Cl',2,1);
+            	generate_equations(compound, 'Ba', 'Cl',2,1);
+            }
+            else if (compound == "BaBr2") {
+            	generate_born_haber(compound, 'Ba', 'Br',2,1);
+            	generate_equations(compound, 'Ba', 'Br',2,1);
+            }
+            else if (compound == "BaI2") {
+            	generate_born_haber(compound, 'Ba', 'I',2,1);
+            	generate_equations(compound, 'Ba', 'I',2,1);
+            }
+            else if (compound == "BaI2") {
+            	generate_born_haber(compound, 'Be', 'O',2,2);
+            	generate_equations(compound, 'Be', 'O',2,2);
+            }
+            else if (compound == "MgO") {
+            	generate_born_haber(compound, 'Mg', 'O',2,2);
+            	generate_equations(compound, 'Mg', 'O',2,2);
+            }
+            else if (compound == "CaO") {
+            	generate_born_haber(compound, 'Ca', 'O',2,2);
+            	generate_equations(compound, 'Ca', 'O',2,2);
+            }
+            else if (compound == "SrO") {
+            	generate_born_haber(compound, 'Sr', 'O',2,2);
+            	generate_equations(compound, 'Sr', 'O',2,2);
+            }
+            else if (compound == "BaO") {
+            	generate_born_haber(compound, 'Ba', 'O',2,2);
+            	generate_equations(compound, 'Ba', 'O',2,2);
+            }
+            else if (compound == "CuCl2") {
+            	generate_born_haber(compound, 'Cu', 'Cl',2,1);
+            	generate_equations(compound, 'Cu', 'Cl',2,1);
+            }
+            else if (compound == "AgF") {
+            	generate_born_haber(compound, 'Ag', 'F',1,1);
+            	generate_equations(compound, 'Ag', 'F',1,1);
+
+            }
+            else if (compound == "AgCl") {
+            	generate_born_haber(compound, 'Ag', 'Cl',1,1);
+            	generate_equations(compound, 'Ag', 'Cl',1,1);
+            }
+            else if (compound == "AgBr") {
+            	generate_born_haber(compound, 'Ag', 'Br',1,1);
+            	generate_equations(compound, 'Ag', 'Br',1,1);
+            }
+            else if (compound == "AgI") {
+            	generate_born_haber(compound, 'Ag', 'I',1,1);
+            	generate_equations(compound, 'Ag', 'I',1,1);
+            }
+
+    }
+    </script>
+    </div>
+</body> 
+</html>
+
+
